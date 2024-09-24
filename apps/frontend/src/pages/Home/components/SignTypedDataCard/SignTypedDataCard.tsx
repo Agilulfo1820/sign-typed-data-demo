@@ -85,6 +85,7 @@ export const SignTypedDataCard = () => {
     //   BigInt(1)
     // );
 
+    // THIS NEEDS TO BE IMPLEMENTED IN THE EXTENSION
     signer.signTypedData(domain, types, value).then((signature) => {
       setSignature(signature);
     });
@@ -110,7 +111,6 @@ export const SignTypedDataCard = () => {
       throw new Error("Root signer is null");
     }
 
-    // THIS NEEDS TO BE IMPLEMENTED IN THE EXTENSION
     rootSigner.signTypedData(domain, types, value).then((signature) => {
       setSignature(signature);
     });
