@@ -65,20 +65,20 @@ export const SignTypedDataCard = () => {
       return;
     }
     const wallet = new CertificateBasedWallet(
-      window.vechain?.newConnexSigner(getConfig("mainnet").network.genesis.id)
+      window.vechain?.newConnexSigner(getConfig("testnet").network.genesis.id)
     );
 
     const signer = new VeChainSignerDAppKit(
       wallet,
       account ?? "",
       new VeChainProvider(
-        ThorClient.fromUrl(getConfig("mainnet").network.urls[0])
+        ThorClient.fromUrl(getConfig("testnet").network.urls[0])
       )
     );
 
     // Test that I can transfer VTHO opening the wallet
     // const vthoCotnract = ThorClient.fromUrl(
-    //   getConfig("mainnet").network.urls[0]
+    //   getConfig("testnet").network.urls[0]
     // ).contracts.load(VTHO_ADDRESS, ERC20_ABI, signer);
     // await vthoCotnract.transact.transfer(
     //   "0x3f90bF8b314C42005103B3c94505634fA680Dcee",
@@ -95,7 +95,7 @@ export const SignTypedDataCard = () => {
     const privateKey = generatePrivateKey();
     const account = privateKeyToAccount(privateKey);
 
-    const thor = ThorClient.fromUrl(getConfig("mainnet").network.urls[0]);
+    const thor = ThorClient.fromUrl(getConfig("testnet").network.urls[0]);
 
     const rootAccount = {
       privateKey: Buffer.from(privateKey.slice(2), "hex"),
