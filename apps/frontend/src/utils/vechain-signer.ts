@@ -94,7 +94,7 @@ class VeChainSignerDAppKit extends VeChainAbstractSigner {
     _types: Record<string, ethers.TypedDataField[]>,
     _value: Record<string, unknown>
   ): Promise<string> {
-    return this.signTypedData(_domain, _types, _value);
+    return this.wallet.signTypedData(_domain, _types, _value);
   }
 
   async _signFlow(
