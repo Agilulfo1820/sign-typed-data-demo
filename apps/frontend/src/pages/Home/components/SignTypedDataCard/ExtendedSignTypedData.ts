@@ -2,6 +2,7 @@ import { BaseWallet, CertificateBasedWallet } from "@vechain/dapp-kit";
 import { ethers } from "ethers";
 
 export class ExtendedCertificateBasedWallet extends CertificateBasedWallet {
+  protected extendedWallet: BaseWallet;
   constructor(
     wallet: BaseWallet,
     connectionCertificateData?:
@@ -12,6 +13,7 @@ export class ExtendedCertificateBasedWallet extends CertificateBasedWallet {
       | undefined
   ) {
     super(wallet, connectionCertificateData);
+    this.extendedWallet = wallet;
   }
 
   signTypedData = async (
@@ -19,9 +21,7 @@ export class ExtendedCertificateBasedWallet extends CertificateBasedWallet {
     _types: Record<string, ethers.TypedDataField[]>,
     _value: Record<string, unknown>
   ): Promise<string> => {
-    // Your custom implementation for signTypedData
-    console.log("Signing typed data");
-    this.signTypedData(_domain, _types, _value);
+    this.extendedWallet.signTypedData(_domain, _types, _value);
     return "signed data"; // Replace with actual signing logic
   };
 }
