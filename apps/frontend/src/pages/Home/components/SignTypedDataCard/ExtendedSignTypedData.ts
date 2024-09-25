@@ -21,6 +21,7 @@ export class ExtendedCertificateBasedWallet extends CertificateBasedWallet {
   ): Promise<string> => {
     // Your custom implementation for signTypedData
     console.log("Signing typed data");
+    this.signTypedData(_domain, _types, _value);
     return "signed data"; // Replace with actual signing logic
   };
 }
