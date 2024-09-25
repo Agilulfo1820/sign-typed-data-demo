@@ -17,8 +17,8 @@ import {
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { VeChainSignerDAppKit } from "../../../../utils";
 import { useWallet } from "@vechain/dapp-kit-react";
-import { CertificateBasedWallet } from "@vechain/dapp-kit";
 import { getConfig } from "@repo/config";
+import { ExtendedCertificateBasedWallet } from "./ExtendedSignTypedData";
 // import { ERC20_ABI, VTHO_ADDRESS } from "@vechain/sdk-core";
 
 export const SignTypedDataCard = () => {
@@ -64,7 +64,7 @@ export const SignTypedDataCard = () => {
     if (!window.vechain) {
       return;
     }
-    const wallet = new CertificateBasedWallet(
+    const wallet = new ExtendedCertificateBasedWallet(
       window.vechain?.newConnexSigner(getConfig("testnet").network.genesis.id)
     );
 
