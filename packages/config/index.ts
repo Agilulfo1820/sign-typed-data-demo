@@ -14,7 +14,6 @@ export type AppConfig = {
 
 export const getConfig = (env?: EnvConfig): AppConfig => {
   const appEnv = env || process.env.VITE_APP_ENV;
-  console.log("appEnv", appEnv);
 
   if (!appEnv)
     throw new Error(
