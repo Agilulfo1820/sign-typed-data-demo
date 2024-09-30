@@ -173,3 +173,18 @@ coverage
 
 
 packages/contracts/cache/
+
+
+packages/contracts/node_modules
+packages/contracts/.env
+packages/contracts/coverage
+packages/contracts/coverage.json
+packages/contracts/typechain
+packages/contracts/typechain-types
+
+# Hardhat files
+packages/contracts/cache
+packages/contracts/artifacts
+packages/contracts/.vscode/*
+
+packages/contracts/docs
