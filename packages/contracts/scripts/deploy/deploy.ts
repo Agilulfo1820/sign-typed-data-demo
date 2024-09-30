@@ -21,13 +21,12 @@ export async function deployAll(config: ContractsConfig) {
 
   // ---------------------- Deploy Contracts ----------------------
 
-  // Deploy the fiorino contract
-  const contractName = "Fiorino";
-  const owner = "0xf077b491b355e64048ce21e3a6fc4751eeea77fa";
-  const FiorinoContract = await ethers.getContractFactory(contractName);
-  const fiorino = await FiorinoContract.deploy(owner);
-  await fiorino.waitForDeployment();
-  console.log(`${contractName} impl.: ${await fiorino.getAddress()}`);
+  // Deploy the contract
+  const contractName = "EtherMail712";
+  const EtherMail712 = await ethers.getContractFactory(contractName);
+  const contract = await EtherMail712.deploy();
+  await contract.waitForDeployment();
+  console.log(`${contractName} impl.: ${await contract.getAddress()}`);
 
   const date = new Date(performance.now() - start);
   console.log(
@@ -35,7 +34,7 @@ export async function deployAll(config: ContractsConfig) {
   );
 
   const contractAddresses: Record<string, string> = {
-    fiorino: await fiorino.getAddress(),
+    etherMail712: await contract.getAddress(),
   };
 
   console.log("Contracts", contractAddresses);
@@ -53,13 +52,13 @@ export async function deployAll(config: ContractsConfig) {
 
   await overrideContractConfigWithNewContracts(
     {
-      fiorino,
+      contract,
     },
     appConfig.network
   );
 
   return {
-    fiorino,
+    contract,
   };
   // close the script
 }
@@ -70,7 +69,7 @@ export async function overrideContractConfigWithNewContracts(
 ) {
   const newConfig: AppConfig = {
     ...appConfig,
-    fiorinoContractAddress: await contracts.fiorino.getAddress(),
+    etherMail712: await contracts.contract.getAddress(),
   };
 
   // eslint-disable-next-line

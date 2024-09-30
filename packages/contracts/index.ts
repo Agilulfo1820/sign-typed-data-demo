@@ -1,5 +1,5 @@
-import FiorinoContractJson from "./artifacts/contracts/Fiorino.sol/Fiorino.json";
+import EtherMail712Json from "./artifacts/contracts/EtherMail712.sol/EtherMail712.json";
 
-export { Fiorino__factory } from "./typechain-types";
+export { EtherMail712__factory } from "./typechain-types";
 
-export { FiorinoContractJson };
+export { EtherMail712Json };

@@ -40,7 +40,7 @@ Place your `.env` files in the root folder, you can copy `.env.example` file and
 ### Run the frontend and deploy the contracts on the Local Solo Network (if not deployed yet) with a single command:
 
 ```bash
-  yarn dev
+  yarn dev:testnet
 ```
 
 You should see a log like this, that means the frontend is running:
@@ -52,4 +52,11 @@ frontend:dev:   ➜  Local:   http://localhost:5001/
 frontend:dev:   ➜  Network: http://192.168.1.26:5001/
 frontend:dev:   ➜  Network: http://192.168.64.1:5001/
 frontend:dev:   ➜  press h + enter to show help
+```
+
+### Run the frontend and deploy the contracts on your own solo network:
+
+```bash
+  yarn dev
+
 ```

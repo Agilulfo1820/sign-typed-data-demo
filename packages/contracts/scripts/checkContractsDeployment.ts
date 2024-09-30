@@ -24,24 +24,21 @@ async function main() {
 // check if the contracts specified in the config file are deployed on the network, if not, deploy them (only on solo network)
 async function checkContractsDeployment() {
   try {
-    const fiorinoContract = config.fiorinoContractAddress;
-    const code = fiorinoContract
-      ? await ethers.provider.getCode(fiorinoContract)
+    const etherMail712Contract = config.etherMail712;
+    const code = etherMail712Contract
+      ? await ethers.provider.getCode(etherMail712Contract)
       : "0x";
     if (code === "0x") {
-      console.log(
-        `fiorino contract not deployed at address ${config.fiorinoContractAddress}`
-      );
-      if (isSoloNetwork) {
-        // deploy the contracts and override the config file
-        const newAddresses = await deployAll(getContractsConfig(env));
+      console.log(`contract not deployed at address ${config.etherMail712}`);
 
-        return await overrideLocalConfigWithNewContracts(
-          newAddresses,
-          config.network
-        );
-      } else console.log(`Skipping deployment on ${network.name}`);
-    } else console.log(`fiorino contract already deployed`);
+      // deploy the contracts and override the config file
+      const newAddresses = await deployAll(getContractsConfig(env));
+
+      return await overrideLocalConfigWithNewContracts(
+        newAddresses,
+        config.network
+      );
+    } else console.log(`contract already deployed`);
   } catch (e) {
     console.log(e);
   }
@@ -53,7 +50,7 @@ async function overrideLocalConfigWithNewContracts(
 ) {
   const newConfig: AppConfig = {
     ...config,
-    fiorinoContractAddress: await contracts.fiorino.getAddress(),
+    etherMail712: await contracts.contract.getAddress(),
   };
 
   // eslint-disable-next-line
