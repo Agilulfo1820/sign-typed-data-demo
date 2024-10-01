@@ -2,7 +2,7 @@ import { AppConfig } from "."
  const config: AppConfig = {
   "environment": "testnet",
   "basePath": "https://example.org",
-  "etherMail712": "0xcDc1f9C57289A09c1cFC91D9d9ccE67A6dB79c6e",
+  "etherMail712": "0x1CAB02Ec1922F1a5a55996de8c590161A88378b9",
   "nodeUrl": "https://testnet.vechain.org",
   "network": {
     "id": "testnet",

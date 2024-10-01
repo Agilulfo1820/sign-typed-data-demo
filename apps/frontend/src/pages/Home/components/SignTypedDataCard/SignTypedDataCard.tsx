@@ -9,7 +9,6 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { Code } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
   ThorClient,
