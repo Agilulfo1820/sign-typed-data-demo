@@ -24,7 +24,7 @@ contract EtherMail712 is EIP712 {
     constructor() EIP712(SIGNING_DOMAIN, SIGNATURE_VERSION) {}
 
     // Hash function for Person struct
-    function hashPerson(Person memory person) internal pure returns (bytes32) {
+    function hashPerson(Person memory person) public pure returns (bytes32) {
         return
             keccak256(
                 abi.encode(
@@ -36,7 +36,11 @@ contract EtherMail712 is EIP712 {
     }
 
     // Hash function for Mail struct
-    function hashMail(Mail memory mail) internal view returns (bytes32) {
+    function hashMail(
+        Person memory from,
+        Person memory to,
+        string memory contents
+    ) public view returns (bytes32) {
         return
             _hashTypedDataV4(
                 keccak256(
@@ -44,9 +48,9 @@ contract EtherMail712 is EIP712 {
                         keccak256(
                             "Mail(Person from,Person to,string contents)Person(string name,address wallet)"
                         ),
-                        hashPerson(mail.from),
-                        hashPerson(mail.to),
-                        keccak256(bytes(mail.contents))
+                        hashPerson(from),
+                        hashPerson(to),
+                        keccak256(bytes(contents))
                     )
                 )
             );
@@ -54,12 +58,15 @@ contract EtherMail712 is EIP712 {
 
     // Function to verify a Mail message with a signature
     function verify(
-        Mail memory mail,
+        Person memory from,
+        Person memory to,
+        string memory contents,
         bytes memory signature,
         address expectedSigner
     ) public view returns (bool) {
-        bytes32 digest = hashMail(mail);
+        bytes32 digest = hashMail(from, to, contents);
         address signer = digest.recover(signature);
+
         return signer == expectedSigner;
     }
 
@@ -68,10 +75,12 @@ contract EtherMail712 is EIP712 {
         Person memory from,
         Person memory to,
         string memory contents,
-        bytes memory signature
+        bytes calldata signature
     ) public {
-        Mail memory mail = Mail(from, to, contents);
-        require(verify(mail, signature, from.wallet), "Invalid signature");
+        require(
+            verify(from, to, contents, signature, from.wallet),
+            "Invalid signature"
+        );
 
         // Process the mail (e.g., emit an event)
         emit MailSent(from.wallet, to.wallet, contents);

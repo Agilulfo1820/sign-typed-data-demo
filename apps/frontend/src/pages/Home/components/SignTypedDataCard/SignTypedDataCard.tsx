@@ -4,11 +4,13 @@ import {
   CardBody,
   CardFooter,
   HStack,
+  Input,
   Text,
+  Textarea,
   VStack,
 } from "@chakra-ui/react";
 import { Code } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ThorClient,
   VeChainProvider,
@@ -19,17 +21,40 @@ import { VeChainSignerDAppKit } from "../../../../utils";
 import { useWallet } from "@vechain/dapp-kit-react";
 import { getConfig } from "@repo/config";
 import { ExtendedCertificateBasedWallet } from "./ExtendedSignTypedData";
+import { useVerifySignature } from "../../../../hooks/useVerifySignature";
 // import { ERC20_ABI, VTHO_ADDRESS } from "@vechain/sdk-core";
 
 export const SignTypedDataCard = () => {
+  const thor = ThorClient.fromUrl(
+    getConfig(import.meta.env.VITE_APP_ENV).nodeUrl
+  );
+
   const [signature, setSignature] = useState<string | null>(null);
+  const [signer, setSigner] = useState<string | null>(null);
+  const [chainId, setChainId] = useState<string | null>(null);
+
+  const contractAddress = getConfig(import.meta.env.VITE_APP_ENV).etherMail712;
+
+  /**
+   * identify the current chain from its genesis block
+   */
+  useEffect(() => {
+    thor.blocks
+      .getGenesisBlock()
+      .then(
+        (genesis) => genesis?.id && setChainId(BigInt(genesis.id).toString())
+      )
+      .catch(() => {
+        /* ignore */
+      });
+  }, [thor]);
 
   // All properties on a domain are optional
   const domain = {
     name: "Ether Mail",
     version: "1",
-    chainId: 1,
-    verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    chainId: chainId,
+    verifyingContract: contractAddress,
   };
 
   // The named list of all type definitions
@@ -60,6 +85,12 @@ export const SignTypedDataCard = () => {
 
   const { account } = useWallet();
 
+  const { data: verifyResult } = useVerifySignature(
+    value,
+    signature ?? "",
+    signer ?? ""
+  );
+
   const sign = async () => {
     if (!window.vechain) {
       return;
@@ -88,6 +119,7 @@ export const SignTypedDataCard = () => {
     // THIS NEEDS TO BE IMPLEMENTED IN THE EXTENSION
     signer.signTypedData(domain, types, value).then((signature) => {
       setSignature(signature);
+      setSigner(account);
     });
   };
 
@@ -113,54 +145,101 @@ export const SignTypedDataCard = () => {
 
     rootSigner.signTypedData(domain, types, value).then((signature) => {
       setSignature(signature);
+      setSigner(account.address);
     });
   };
 
   return (
-    <Card>
-      <CardBody>
-        <VStack align="start">
-          <Text fontSize="lg" fontWeight="bold">
-            Sign Typed Data
-          </Text>
+    <>
+      <Card>
+        <CardBody>
+          <VStack align="start">
+            <Text fontSize="lg" fontWeight="bold">
+              Sign Typed Data
+            </Text>
 
-          <Text fontSize="sm" color="gray.500">
-            Domain
-          </Text>
-          <Code children={JSON.stringify(domain)} />
+            <Text fontSize="sm" color="gray.500">
+              Domain
+            </Text>
 
-          <Text fontSize="sm" color="gray.500">
-            Types
-          </Text>
-          <Code children={JSON.stringify(types)} />
+            <Textarea
+              value={JSON.stringify(domain)}
+              disabled
+              overflowY={"hidden"}
+              resize="none"
+            />
 
-          <Text fontSize="sm" color="gray.500">
-            Value
-          </Text>
-          <Code children={JSON.stringify(value)} />
-        </VStack>
-      </CardBody>
+            <Text fontSize="sm" color="gray.500">
+              Types
+            </Text>
+            <Textarea
+              value={JSON.stringify(types)}
+              disabled
+              overflowY={"hidden"}
+              resize="none"
+            />
 
-      <CardFooter>
-        <VStack align="start" spacing={2}>
-          <HStack>
-            <Button colorScheme="blue" size="sm" onClick={sign}>
-              Sign with connected wallet
-            </Button>
+            <Text fontSize="sm" color="gray.500">
+              Value
+            </Text>
+            <Textarea
+              value={JSON.stringify(value)}
+              disabled
+              overflowY={"hidden"}
+              resize="none"
+            />
+          </VStack>
+        </CardBody>
 
-            <Button colorScheme="gray" size="sm" onClick={signWithFakeWallet}>
-              Sign with fake wallet
-            </Button>
-          </HStack>
+        <CardFooter>
+          <VStack align="start" spacing={2}>
+            <HStack>
+              <Button colorScheme="blue" size="sm" onClick={sign}>
+                Sign with connected wallet
+              </Button>
 
-          {signature && (
-            <HStack justify="flex-end" spacing={4}>
-              <Text color="gray.500">Signature:</Text>
-              <Code>{signature}</Code>
+              <Button colorScheme="gray" size="sm" onClick={signWithFakeWallet}>
+                Sign with random wallet
+              </Button>
             </HStack>
+          </VStack>
+        </CardFooter>
+      </Card>
+
+      {/* Card for result */}
+      <Card>
+        <CardBody>
+          <VStack align="start">
+            <Text fontSize="lg" fontWeight="bold">
+              Result
+            </Text>
+
+            <Text fontSize="sm" color="gray.500">
+              Signature
+            </Text>
+            <Input value={signature ?? ""} disabled />
+
+            <Text fontSize="sm" color="gray.500">
+              Signer
+            </Text>
+            <Input value={signer ?? ""} disabled />
+          </VStack>
+        </CardBody>
+        <CardFooter>
+          {signature && (
+            <VStack align="start">
+              <Text fontSize="lg" fontWeight="bold">
+                Verification
+              </Text>
+
+              <Text fontSize="sm" color="gray.500">
+                Signature is valid: {verifyResult ? "Yes" : "No"}
+              </Text>
+              {verifyResult}
+            </VStack>
           )}
-        </VStack>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </>
   );
 };

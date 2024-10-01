@@ -1,3 +1,0 @@
-{
-  "etherMail712": "0xcDc1f9C57289A09c1cFC91D9d9ccE67A6dB79c6e"
-}
