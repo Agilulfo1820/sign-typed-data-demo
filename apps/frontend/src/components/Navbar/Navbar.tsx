@@ -1,10 +1,4 @@
-import {
-  HStack,
-  Heading,
-  Tag,
-  VStack,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { HStack, Heading, Tag, useBreakpointValue } from "@chakra-ui/react";
 import { getConfig } from "@repo/config";
 import { WalletButton } from "@vechain/dapp-kit-react";
 

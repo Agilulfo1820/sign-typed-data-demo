@@ -19,8 +19,9 @@ export class ExtendedCertificateBasedWallet extends CertificateBasedWallet {
   signTypedData = async (
     _domain: ethers.TypedDataDomain,
     _types: Record<string, ethers.TypedDataField[]>,
-    _value: Record<string, unknown>
+    _value: Record<string, unknown>,
+    options?: SignTypedDataOptions
   ): Promise<string> => {
-    return this.extendedWallet.signTypedData(_domain, _types, _value);
+    return this.extendedWallet.signTypedData(_domain, _types, _value, options);
   };
 }
