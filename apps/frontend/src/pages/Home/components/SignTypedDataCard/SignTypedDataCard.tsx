@@ -94,8 +94,8 @@ export const SignTypedDataCard = () => {
     if (!window.vechain) {
       return;
     }
-    const wallet = new ExtendedCertificateBasedWallet(
-      window.vechain?.newConnexSigner(getConfig("testnet").network.genesis.id)
+    const wallet = new ExtendedCertificateBasedWallet( // -> dappkit
+      window.vechain?.newConnexSigner(getConfig("testnet").network.genesis.id) // -> veworld + estension
     );
 
     const signer = new VeChainSignerDAppKit(
@@ -116,10 +116,14 @@ export const SignTypedDataCard = () => {
     // );
 
     // THIS NEEDS TO BE IMPLEMENTED IN THE EXTENSION
-    signer.signTypedData(domain, types, value).then((signature) => {
-      setSignature(signature);
-      setSigner(account);
-    });
+    signer
+      .signTypedData(domain, types, value, {
+        signer: account ?? "",
+      })
+      .then((signature) => {
+        setSignature(signature);
+        setSigner(account);
+      });
   };
 
   const signWithFakeWallet = async () => {
