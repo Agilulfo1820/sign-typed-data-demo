@@ -4,10 +4,10 @@ import { useWallet } from "@vechain/dapp-kit-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 export type BuildTransactionProps<ClausesParams> = {
-  clauseBuilder: (props: ClausesParams) => EnhancedClause[]
-  refetchQueryKeys?: string[][]
-  onSuccess?: () => void
-  invalidateCache?: boolean
+    clauseBuilder: (props: ClausesParams) => EnhancedClause[]
+    refetchQueryKeys?: string[][]
+    onSuccess?: () => void
+    invalidateCache?: boolean
 }
 
 /**
@@ -19,48 +19,49 @@ export type BuildTransactionProps<ClausesParams> = {
  * @returns An object containing the result of the `useSendTransaction` hook and a `sendTransaction` function.
  */
 export const useBuildTransaction = <ClausesParams>({
-  clauseBuilder,
-  refetchQueryKeys,
-  invalidateCache = true,
-  onSuccess,
+    clauseBuilder,
+    refetchQueryKeys,
+    invalidateCache = true,
+    onSuccess,
 }: BuildTransactionProps<ClausesParams>) => {
-  const { account } = useWallet()
-  const queryClient = useQueryClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const account = (window as any).connectedWallet
+    const queryClient = useQueryClient()
 
-  /**
-   * Callback function to be called when the transaction is successfully confirmed.
-   * It cancels and refetches the specified queries if `invalidateCache` is `true`.
-   */
-  const handleOnSuccess = useCallback(async () => {
-    if (invalidateCache) {
-      refetchQueryKeys?.forEach(async queryKey => {
-        await queryClient.cancelQueries({
-          queryKey,
-        })
-        await queryClient.refetchQueries({
-          queryKey,
-        })
-      })
-    }
+    /**
+     * Callback function to be called when the transaction is successfully confirmed.
+     * It cancels and refetches the specified queries if `invalidateCache` is `true`.
+     */
+    const handleOnSuccess = useCallback(async () => {
+        if (invalidateCache) {
+            refetchQueryKeys?.forEach(async queryKey => {
+                await queryClient.cancelQueries({
+                    queryKey,
+                })
+                await queryClient.refetchQueries({
+                    queryKey,
+                })
+            })
+        }
 
-    onSuccess?.()
-  }, [invalidateCache, onSuccess, queryClient, refetchQueryKeys])
+        onSuccess?.()
+    }, [invalidateCache, onSuccess, queryClient, refetchQueryKeys])
 
-  const result = useSendTransaction({
-    signerAccount: account,
-    onTxConfirmed: handleOnSuccess,
-  })
+    const result = useSendTransaction({
+        signerAccount: account,
+        onTxConfirmed: handleOnSuccess,
+    })
 
-  /**
-   * Function to send a transaction based on the provided parameters.
-   * @param props - The parameters to be passed to the `clauseBuilder` function.
-   */
-  const sendTransaction = useCallback(
-    (props: ClausesParams) => {
-      result.sendTransaction(clauseBuilder(props))
-    },
-    [clauseBuilder, result],
-  )
+    /**
+     * Function to send a transaction based on the provided parameters.
+     * @param props - The parameters to be passed to the `clauseBuilder` function.
+     */
+    const sendTransaction = useCallback(
+        (props: ClausesParams) => {
+            result.sendTransaction(clauseBuilder(props))
+        },
+        [clauseBuilder, result],
+    )
 
-  return { ...result, sendTransaction }
+    return { ...result, sendTransaction }
 }
